@@ -40,3 +40,9 @@
 .read-the-docs {
   color: #888;
 }
+
+.institution-dash h1 {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
