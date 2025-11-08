@@ -5,6 +5,7 @@ import LocationIconImg from '../assets/location-icon.png';
 import UpdateIconImg from '../assets/update-icon.png';
 import ModernStateLogo from '../assets/Modern-State_logo.png';
 import ListIconImg from '../assets/list-icon.jpg';
+import UserIcon from '../assets/user-icon.png';
 
 
 // --- Placeholder Data ---
@@ -253,8 +254,7 @@ const LearnerDash = () => {
           <img src={ModernStateLogo} alt="Modern State Logo" className="header-logo-img" />
         </div>
         <button className="header-login-btn">
-          <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v18h-6M10 17l5-5l-5-5M15 12H3"/></svg>
-          Login
+          <img src={UserIcon} alt="User Login" className="user-icon-img" />
         </button>
       </header>
 
