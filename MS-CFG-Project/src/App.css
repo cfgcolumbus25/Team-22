@@ -41,6 +41,7 @@
   color: #888;
 }
 
+<<<<<<< HEAD
 .institution-dash {
   opacity: 1 !important;   /* kills any inherited fade */
   filter: none !important;  /* in case a dimming filter was applied */
@@ -53,4 +54,3 @@
 .institution-dash button {
   color: #000 !important;
 }
-

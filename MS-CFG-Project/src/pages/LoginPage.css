@@ -1,136 +1,138 @@
-/* General Reset/Setup (Optional but Recommended) */
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4; /* A slight default background for context */
+.learner-bg {
+  background-color: #007bff;  /* blue like login page */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 0;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
-/* --- Layout and Background --- */
-.background-area {
-    min-height: 100vh;
-    min-width: 100vw;
-    background-color: #007bff; /* The bright blue background */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 50px; /* Space for the logo at the top */
-    padding-bottom: 50px;
+/* Header */
+h1 {
+  color: white;
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+  font-weight: 600;
+  text-align: center;
 }
 
-/* --- Logo Box --- */
-.logo-box {
-    background-color: white;
-    width: 300px;
-    height: 100px;
-    border-radius: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 30px; /* Space between logo and card */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+/* Grid of cards */
+.dash-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+  max-width: 1000px;
 }
 
-.logo-image {
-    max-width: 200px;
-    max-height: 200px;
-    object-fit: contain;
+/* Card styling */
+.card {
+  background-color: white;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 850px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  overflow-x: auto;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
-/* --- Login Card --- */
-.login-card {
-    background-color: white;
-    padding: 40px;
-    border-radius: 20px;
-    width: 100%;
-    max-width: 400px; /* Max width for the card */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    text-align: center;
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
 }
 
-/* --- Text Styles --- */
-.welcome-text {
-    font-size: 1.8rem;
-    color: #333;
-    margin-bottom: 5px;
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  border-radius: 20px 20px 0 0;
+  padding: 18px 20px;
+  text-align: center;
 }
 
-.subtitle-text {
-    color: #6c757d;
-    margin-bottom: 30px;
-    font-size: 0.95rem;
+.card-header h2 {
+  margin: 0;
+  color: #007bff;
+  font-size: 1.4rem;
+  font-weight: bold;
 }
 
-/* --- Form and Inputs --- */
-.login-form {
-    text-align: left;
+/* Table styling */
+.card-body {
+  padding: 20px;
 }
 
-.input-group {
-    margin-bottom: 20px;
+.exam-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.input-group label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 5px;
-    color: #333;
+.exam-table th {
+  background-color: #f1f3f5;
+  color: #6c757d;
+  font-weight: 600;
+  padding: 12px 14px;
+  border-bottom: 1px solid #dee2e6;
+  text-align: left;
+}
+
+.exam-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #eee;
+  color: #333;
+}
+
+.exam-table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+/* Dropdown + Button */
+.issue-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.issue-actions select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  background-color: #fff;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.issue-actions button {
+  background-color: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.issue-actions button:hover {
+  background-color: #333;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  .card {
+    width: 95%;
+  }
+
+  .exam-table th,
+  .exam-table td {
     font-size: 0.9rem;
-}
-
-.input-group input,
-.input-group select {
-    width: 100%;
-    padding: 10px 15px;
-    border: 1px solid #ced4da;
-    border-radius: 8px;
-    font-size: 1rem;
-    box-sizing: border-box;
-    /* Adding a placeholder icon for the password, you'd usually use an SVG icon */
-    background-repeat: no-repeat;
-    background-position: 15px center;
-}
-
-/* Styling for the Password Row to align the link */
-.password-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.forgot-password {
-    font-size: 0.85rem;
-    color: #007bff;
-    text-decoration: none;
-}
-
-/* --- Button --- */
-.sign-in-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #1a1a1a; /* Dark button color */
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    margin-top: 15px;
-    transition: background-color 0.3s;
-}
-
-.sign-in-button:hover {
-    background-color: #333;
-}
-
-/* --- Sign Up Prompt --- */
-.signup-prompt {
-    margin-top: 30px;
-    font-size: 0.9rem;
-    color: #6c757d;
-}
-
-.signup-link {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
+    padding: 8px;
+  }
 }
