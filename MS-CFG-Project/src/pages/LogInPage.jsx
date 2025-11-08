@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 import ModernStateLogo from '../assets/Modern-State_logo.png';
 
@@ -8,21 +7,11 @@ const LogInPage = () => {
   const [accountType, setAccountType] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
 
   const handleSignIn = (e) => {
     e.preventDefault();
     // Logic for sign-in goes here
     console.log('Signing in with:', { accountType, email, password });
-    
-    // Navigate to learner dashboard
-    if (accountType === 'learner') {
-      navigate('/learner');
-    } else if (accountType === 'institution') {
-      navigate('/institution');
-    } else if (accountType === 'ms_admin') {
-      navigate('/admin');
-    }
   };
 
   return (
