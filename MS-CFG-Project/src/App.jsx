@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import { Routes, Route } from 'react-router-dom'
-import LogInPage from './pages/LogInPage'
+import LogInPage from './pages/LogInPage' 
 import InstitutionDash from './pages/InstitutionDash'
 import LearnerDash from './pages/LearnerDash'
 import MSAdminDash from './pages/MSAdminDash'
