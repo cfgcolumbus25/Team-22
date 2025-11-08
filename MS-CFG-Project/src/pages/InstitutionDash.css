@@ -19,3 +19,9 @@
 #delete-btn{
     color: #000
 }
+
+.institution-dash h1{
+    border-bottom: 2px solid #000;
+    padding-bottom: 8px;
+    margin-bottom:12px;
+}
