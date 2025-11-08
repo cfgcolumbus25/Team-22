@@ -1,0 +1,98 @@
+/* SignUpPage.css
+   Reuses the core LoginPage styles for consistent branding. */
+@import './LoginPage.css';
+
+/* --- Sign Up Page Specific Overrides --- */
+
+/* Slightly adjust spacing for multiple input fields */
+.login-card {
+    max-width: 450px; /* Slightly wider for more form fields */
+}
+
+/* Highlight for welcome text to give the page a distinct tone */
+.welcome-text {
+    color: #0056b3;
+}
+
+/* Adjust dropdown styling for account type selector */
+.input-group select {
+    appearance: none;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path fill='none' stroke='%23007bff' stroke-width='2' d='M1 1l5 5 5-5'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 12px;
+}
+
+/* Confirmation message (after successful sign up) */
+.confirmation-message {
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+.confirmation-message .welcome-text {
+    color: #007bff;
+    margin-bottom: 15px;
+}
+
+.confirmation-message .subtitle-text {
+    font-size: 1rem;
+    margin-bottom: 25px;
+}
+
+/* Modal styles for login popup */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.4s ease;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 450px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    position: relative;
+    animation: slideUp 0.4s ease;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: #333;
+    transition: 0.2s;
+}
+
+.close-modal-btn:hover {
+    color: #007bff;
+}
+
+.modal-link {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.95rem;
+    text-decoration: underline;
+    padding: 0;
+}
+
+.modal-link:hover {
+    color: #0056b3;
+}
