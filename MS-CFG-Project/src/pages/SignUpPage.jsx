@@ -136,7 +136,7 @@ const SignUpPage = () => {
             <button
               className="signup-link modal-link"
               type="button"
-              onClick={() => setShowLoginModal(true)}
+             onClick={onClose}
             >
               Return to Login
             </button>

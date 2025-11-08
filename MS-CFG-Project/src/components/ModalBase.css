@@ -1,4 +1,6 @@
 /* src/components/ModalBase.css */
+
+/* --- Modal Overlay --- */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -8,34 +10,69 @@
   justify-content: center;
   align-items: center;
   z-index: 999;
+  animation: fadeIn 0.3s ease-in;
 }
 
+/* --- Modal Content Box --- */
 .modal-content {
   background-color: #fff;
   padding: 2rem;
-  border-radius: 16px;
-  width: 400px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease-out;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* --- Larger Modal (used by SignUp) --- */
 .large-modal {
-  width: 600px; /* slightly wider for signup forms */
+  max-width: 600px;
 }
 
+/* --- Close Button --- */
 .close-button {
   position: absolute;
   top: 1rem;
   right: 1rem;
   border: none;
   background: none;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   cursor: pointer;
   color: #333;
+  transition: color 0.25s ease, transform 0.2s ease;
 }
 
 .close-button:hover {
-  color: #007bff;
+  color: rgb(241, 7, 7); /* red hover */
+  transform: scale(1.1);
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* --- Responsive Tweaks --- */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    padding: 1.5rem;
+    border-radius: 15px;
+  }
+
+  .close-button {
+    font-size: 1.5rem;
+    top: 0.8rem;
+    right: 0.8rem;
+  }
 }
