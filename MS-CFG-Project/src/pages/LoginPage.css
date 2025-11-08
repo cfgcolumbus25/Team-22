@@ -1,38 +1,41 @@
 /* General Reset/Setup (Optional but Recommended) */
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Inter' , Arial, sans-serif;
     background-color: #f4f4f4; /* A slight default background for context */
+    line-height: 1.6;
+    letter-spacing: 0.2px;
 }
 
 /* --- Layout and Background --- */
 .background-area {
     min-height: 100vh;
     min-width: 100vw;
-    background-color: #007bff; /* The bright blue background */
+    background: linear-gradient(135deg, #007bff, #0056b3); /* The bright blue background */
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 50px; /* Space for the logo at the top */
-    padding-bottom: 50px;
+    justify-content: center;
+    padding: 50px 20px; /* Space for the logo at the top */
+    animation: fadeIn 1s ease-in;
 }
 
 /* --- Logo Box --- */
 .logo-box {
     background-color: white;
-    width: 300px;
-    height: 100px;
+    width: 280px;
+    height: 90px;
     border-radius: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 30px; /* Space between logo and card */
+    margin-bottom: 25px; /* Space between logo and card */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    animation: slideDown 0.8s ease-out;
 }
 
 .logo-image {
-    max-width: 200px;
-    max-height: 200px;
+    max-width: 180px;
     object-fit: contain;
 }
 
@@ -45,6 +48,13 @@ body {
     max-width: 400px; /* Max width for the card */
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     text-align: center;
+    animation: slideUp 0.8s ease-out;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
 /* --- Text Styles --- */
@@ -52,6 +62,7 @@ body {
     font-size: 1.8rem;
     color: #333;
     margin-bottom: 5px;
+    font-weight: 600;
 }
 
 .subtitle-text {
@@ -72,7 +83,7 @@ body {
 .input-group label {
     display: block;
     font-weight: 500;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     color: #333;
     font-size: 0.9rem;
 }
@@ -85,12 +96,18 @@ body {
     border-radius: 8px;
     font-size: 1rem;
     box-sizing: border-box;
-    /* Adding a placeholder icon for the password, you'd usually use an SVG icon */
-    background-repeat: no-repeat;
-    background-position: 15px center;
+    transition: all 0.25s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
-/* Styling for the Password Row to align the link */
+.input-group input:focus,
+.input-group select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 6px rgba(0, 123, 255, 0.4);
+    outline: none;
+}
+
+/* --- Password Header --- */
 .password-header {
     display: flex;
     justify-content: space-between;
@@ -102,29 +119,40 @@ body {
     font-size: 0.85rem;
     color: #007bff;
     text-decoration: none;
+    transition: 0.2s;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+    filter: brightness(1.1);
 }
 
 /* --- Button --- */
 .sign-in-button {
     width: 100%;
     padding: 12px;
-    background-color: #1a1a1a; /* Dark button color */
+    background-color: #1a1a1a;
     color: white;
     border: none;
     border-radius: 8px;
     font-size: 1.1rem;
     cursor: pointer;
     margin-top: 15px;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
 }
 
 .sign-in-button:hover {
     background-color: #333;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+}
+
+.sign-in-button:active {
+    transform: scale(0.97);
 }
 
 /* --- Sign Up Prompt --- */
 .signup-prompt {
-    margin-top: 30px;
+    margin-top: 25px;
     font-size: 0.9rem;
     color: #6c757d;
 }
@@ -133,4 +161,39 @@ body {
     color: #007bff;
     text-decoration: none;
     font-weight: bold;
+    transition: color 0.2s;
+}
+
+.signup-link:hover {
+    color: #0056b3;
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 25px;
+        border-radius: 15px;
+    }
+    .welcome-text {
+        font-size: 1.5rem;
+    }
+    .subtitle-text {
+        font-size: 0.85rem;
+    }
 }
