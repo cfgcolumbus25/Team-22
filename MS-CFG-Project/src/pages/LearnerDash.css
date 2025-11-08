@@ -1,0 +1,431 @@
+body {
+    margin: 0;
+    font-family: 'Georgia', serif; 
+    background-color: #fff;
+    color: #333;
+}
+
+.learner-dash-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 200vh;
+    overflow: hidden;
+    width: 300%;
+
+}
+
+.dash-header {
+    background-color: #eaefe9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 40px;
+    height: 50px;
+    color: white;
+}
+
+.header-logo {
+    font-weight: bold;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+.header-logo-img {
+    height: 40px;
+    object-fit: contain;
+}
+
+.header-login-btn {
+    background-color: #007bff;
+    border: 2px solid #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.header-login-btn:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.dash-main-content {
+    background-color: #ffe680;
+    padding: 30px 40px 60px;
+    flex: 1;
+    min-height: calc(100vh - 70px);
+}
+
+/* --- Dashboard Title --- */
+.dash-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 25px;
+}
+
+/* --- Search Bar --- */
+.search-bar-wrapper {
+    background-color: white;
+    border-radius: 8px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    margin-bottom: 40px;
+    max-width: 600px; /* Constraints search bar width */
+}
+
+.search-icon {
+    color: #6c757d;
+    margin-right: 10px;
+}
+
+.search-input {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    font-size: 1rem;
+    padding: 2px 0;
+    color: #333;
+}
+
+/* --- College Cards Grid --- */
+.college-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+/* --- College Card Styles --- */
+.college-card {
+    background-color: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.college-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.card-icon {
+    font-size: 1.8rem;
+    color: #6c757d;
+}
+
+.card-icon-img {
+    width: 1.8rem;
+    height: 1.8rem;
+    object-fit: contain;
+}
+
+.college-type-tag {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+/* Specific Tag Colors */
+.type-private {
+    background-color: #333;
+    color: white;
+}
+.type-public {
+    background-color: #e9ecef;
+    color: #495057;
+}
+.type-technical {
+    background-color: #d7e5f8;
+    color: #000000;
+}
+
+.college-name {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.card-details {
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin: 5px 0;
+}
+
+.detail-icon {
+    font-size: 1rem;
+    margin-right: 10px;
+    color: #333;
+}
+
+.detail-icon-img {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 10px;
+    object-fit: contain;
+}
+
+.list-icon-img {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+
+.scores-count {
+    font-weight: bold;
+    color: #333;
+    margin-right: 4px;
+}
+
+/* --- Fixed Help Button --- */
+.help-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #333;
+    color: white;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Popup Styles --- */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.popup-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #6c757d;
+    line-height: 1;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+}
+
+.popup-close:hover {
+    color: #333;
+}
+
+.popup-content h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 2rem;
+    color: #333;
+}
+
+.popup-feedback-link {
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.feedback-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.feedback-link:hover {
+    text-decoration: underline;
+}
+
+.popup-content .college-type-tag {
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.popup-details {
+    margin: 20px 0;
+}
+
+.popup-location {
+    margin: 12px 0;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.popup-details strong {
+    color: #333;
+    font-weight: 600;
+}
+
+/* Course Search in Popup */
+.course-search-wrapper {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    margin: 20px 0 15px 0;
+    border: 1px solid #dee2e6;
+}
+
+.course-search-input {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    font-size: 0.95rem;
+    padding: 2px 0;
+    background: transparent;
+    color: #333;
+}
+
+/* Course List */
+.course-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+.course-item {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 4px solid #007bff;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.course-item:hover {
+    transform: translateX(3px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.course-highlighted {
+    background-color: #ffe5e5;
+    border-left-color: #dc3545;
+}
+
+.course-highlighted:hover {
+    background-color: #ffd6d6;
+}
+
+.course-info {
+    flex: 1;
+}
+
+.course-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+    flex: 1;
+    min-width: 200px;
+}
+
+.course-details {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9rem;
+}
+
+.course-score {
+    color: #007bff;
+    font-weight: 500;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.course-credits {
+    color: #6c757d;
+}
+
+.course-disclaimer {
+    margin-top: 15px;
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-style: italic;
+    text-align: center;
+}
+
+.no-courses {
+    text-align: center;
+    color: #6c757d;
+    padding: 20px;
+    font-style: italic;
+}
+
+.popup-description {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+.popup-action-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.popup-action-btn:hover {
+    background-color: #0056b3;
+}
