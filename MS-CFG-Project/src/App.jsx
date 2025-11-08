@@ -1,97 +1,78 @@
 // MS-CFG-Project/src/App.jsx
-import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+// 3-Role Authentication System with Testing Mode
+import { useAuth } from "./auth/useAuth";
+import LogInPage from "./pages/LogInPage";
+import LearnerDash from "./pages/LearnerDash";
+import InstitutionDash from "./pages/InstitutionDash";
+import MSAdminDash from "./pages/MSAdminDash";
+import { ROLES } from "./auth/authService";
 import "./App.css";
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
-const COLLEGE_ID = "collegeId"; // your doc id shown in Firestore
+// Enable debug mode for testing (set to false in production)
+const DEBUG_MODE = true;
 
 export default function App() {
-  const [college, setCollege] = useState(null);
-  const [exams, setExams] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [count, setCount] = useState(0); // keep the demo counter if you want
+  const { user, userData, loading, role, isAdmin, isLearner, isInstitution } = useAuth();
 
-  async function loadData() {
-    setLoading(true);
-    const [cRes, eRes] = await Promise.all([
-      fetch(`${API}/api/colleges/${COLLEGE_ID}`),
-      fetch(`${API}/api/colleges/${COLLEGE_ID}/exams`),
-    ]);
-    const cData = await cRes.json();
-    const eData = await eRes.json();
-    setCollege(cData);
-    setExams(Array.isArray(eData) ? eData : []);
-    setLoading(false);
-  }
-
-  // Example “write via backend”: upsert one exam
-  async function upsertExampleExam() {
-    await fetch(`${API}/api/colleges/${COLLEGE_ID}/exams/american-government`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: "American Government",
-        minimumScore: 56,
-        creditsTranscribed: 3.0,
-        transcriptCharge: null,
-        clepUrl:
-          "https://registrar.osu.edu/prior-learning-assessment/examination-credit/college-level-examination-program-clep/",
-        acceptanceLastModified: "2024-12-06T00:00:00Z",
-      }),
+  // Debug logging in development
+  if (DEBUG_MODE) {
+    console.log("🔍 Auth State:", {
+      user: user ? { uid: user.uid, email: user.email } : null,
+      userData,
+      role,
+      isAdmin,
+      isLearner,
+      isInstitution,
+      loading
     });
-    await loadData();
   }
 
-  useEffect(() => {
-    loadData().catch(console.error);
-  }, []);
-
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", flexDirection: "column" }}>
+        <div>🔄 Loading authentication...</div>
+        {DEBUG_MODE && <div style={{ marginTop: "1rem", fontSize: "0.9rem", color: "#666" }}>Checking Firebase Auth & Firestore...</div>}
       </div>
+    );
+  }
 
-      <h1>Firestore via Backend API</h1>
-      <p style={{ opacity: 0.8 }}>
-        Reading from <code>{API}/api</code>
-      </p>
+  // If not authenticated, show login page
+  if (!user || !userData) {
+    if (DEBUG_MODE) {
+      console.log("🚫 Not authenticated - showing login page");
+    }
+    return <LogInPage onLoginSuccess={() => {
+      console.log("✅ Login successful! User will be redirected to dashboard.");
+    }} />;
+  }
 
-      {loading ? (
-        <p>Loading…</p>
-      ) : (
-        <>
-          <pre style={{ textWrap: "wrap" }}>
-            <strong>college:</strong> {JSON.stringify(college)}
-          </pre>
+  // Debug: Show role routing decision
+  if (DEBUG_MODE) {
+    console.log(`🎯 Routing to dashboard for role: ${role}`);
+  }
 
-          <h3>Exams</h3>
-          {exams.length === 0 ? (
-            <p>No exams yet.</p>
-          ) : (
-            <ul>
-              {exams.map((x) => (
-                <li key={x.id}>
-                  <strong>{x.name}</strong> — min score {x.minimumScore}, credits{" "}
-                  {x.creditsTranscribed}
-                </li>
-              ))}
-            </ul>
+  // Route to appropriate dashboard based on role
+  switch (role) {
+    case ROLES.LEARNER:
+      return <LearnerDash />;
+    case ROLES.INSTITUTION:
+      return <InstitutionDash />;
+    case ROLES.ADMIN:
+      return <MSAdminDash />;
+    default:
+      return (
+        <div style={{ padding: "2rem", textAlign: "center" }}>
+          <h2>⚠️ Unknown Role</h2>
+          <p>Your account has an invalid role: <strong>{role}</strong></p>
+          <p>Please contact an administrator.</p>
+          {DEBUG_MODE && (
+            <div style={{ marginTop: "2rem", padding: "1rem", background: "#f5f5f5", borderRadius: "8px", textAlign: "left", maxWidth: "600px", margin: "2rem auto" }}>
+              <h3>Debug Info:</h3>
+              <pre>{JSON.stringify({ user, userData, role }, null, 2)}</pre>
+            </div>
           )}
-        </>
-      )}
-
-      <div className="card" style={{ display: "flex", gap: 16 }}>
-        <button onClick={() => setCount((n) => n + 1)}>count is {count}</button>
-        <button onClick={upsertExampleExam}>Write via Backend</button>
-      </div>
-    </>
-  );
+        </div>
+      );
+  }
 }
