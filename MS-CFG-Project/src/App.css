@@ -1,42 +1,172 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+:root{
+  --bg:#0f1621;
+  --panel:#121c2a;
+  --panel-2:#0f1a2a;
+  --text:#e6eef9;
+  --muted:#9bb0c8;
+  --line:#213149;
+  --primary:#2a66ff;
+  --primary-2:#1948bf;
+  --danger:#d24a4a;
+  --soft:#22314a;
+  --badge:#1b2a44;
+  --flag:#ffd24a;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;}
+
+.shell{max-width:1100px;margin:0 auto;padding:24px}
+
+.topbar{display:grid;gap:16px}
+.brand{margin:0;font-size:28px}
+.filters{display:grid;gap:12px}
+
+.searchbox{position:relative}
+.search-input{padding-right:36px}
+.kbd{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  font:12px/1 monospace;background:var(--soft);color:var(--muted);
+  padding:2px 6px;border-radius:6px;opacity:.9
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.input{
+  width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);
+  outline:none;font-size:14px
+}
+.input--dark{
+  background:var(--panel);color:var(--text);border-color:var(--line);
+}
+.input:focus{border-color:var(--primary)}
+.textarea{resize:vertical}
+
+.label{display:grid;gap:6px;color:var(--muted);font-size:13px}
+.adv-grid{display:grid;gap:10px;grid-template-columns:repeat(4, minmax(0,1fr));align-items:end}
+.add-col{display:flex;justify-content:flex-end}
+
+.chip-row{display:flex;gap:8px;flex-wrap:wrap}
+.chip{
+  background:transparent;border:1px solid var(--line);color:var(--text);
+  padding:8px 12px;border-radius:20px;cursor:pointer
+}
+.chip--active{background:var(--panel);border-color:var(--primary)}
+.chip-caret{margin-left:8px;opacity:.8}
+
+.stack{display:grid;gap:18px;margin-top:10px}
+
+.college-card{
+  background:var(--panel-2);border:1px solid var(--line);border-radius:16px;
+  overflow:hidden;
+}
+.row-head{
+  width:100%;text-align:left;background:transparent;border:none;color:inherit;
+  display:flex;gap:12px;align-items:center;padding:14px 16px;cursor:pointer
+}
+.chev{
+  width:10px;height:10px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);
+  transform:rotate(-45deg);transition:.15s
+}
+.chev.open{transform:rotate(45deg)}
+.school{font-weight:600}
+.meta{margin-left:auto;display:flex;gap:8px}
+.badge{background:var(--badge);color:var(--muted);padding:4px 8px;border-radius:999px;font-size:12px}
+.count{margin-left:12px;color:var(--muted);font-size:13px}
+
+.card-body{padding:14px 16px 18px;border-top:1px solid var(--line)}
+.card-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.title{margin:0}
+.sub{color:var(--muted)}
+.dot{margin:0 6px;color:var(--line)}
+
+.actions-col{display:flex;gap:10px}
+
+.btn{border:none;border-radius:10px;padding:8px 12px;cursor:pointer}
+.btn-primary{background:var(--primary);color:white}
+.btn-primary:hover{background:var(--primary-2)}
+.btn-soft{background:var(--soft);color:var(--text)}
+.btn-danger{background:var(--danger);color:white}
+.btn-row{display:flex;gap:8px}
+.btn-row.end{justify-content:flex-end}
+
+.table-wrap{overflow:auto;border-top-left-radius:12px;border-top-right-radius:12px}
+.tbl{width:100%;border-collapse:separate;border-spacing:0}
+.tbl thead th{
+  background:var(--panel);color:var(--muted);font-weight:600;text-align:left;
+  padding:10px;border-bottom:1px solid var(--line);position:sticky;top:0
+}
+.tbl td{padding:12px 10px;border-bottom:1px solid var(--line)}
+.col-num,.col-date,.col-actions{white-space:nowrap}
+.pill{
+  display:inline-block;background:#1c2a43;padding:10px 16px;border-radius:28px;font-weight:700
+}
+.flag-chip{
+  display:inline-block;margin-left:8px;background:var(--flag);color:#2a2100;
+  padding:2px 8px;border-radius:8px;font-weight:700;font-size:12px
+}
+
+.empty, .empty-row td{color:var(--muted);text-align:center;padding:20px}
+
+/* Modal */
+.modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);
+  display:flex;align-items:center;justify-content:center;z-index:50
+}
+.dialog{
+  width:min(680px,92vw);background:var(--panel-2);border:1px solid var(--line);
+  border-radius:16px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.5)
+}
+.dialog h3{margin:0 0 12px}
+.grid2{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:12px}
+@media (max-width:720px){ .adv-grid{grid-template-columns:1fr} .grid2{grid-template-columns:1fr} }
+
+/* ===== Center the whole page and keep a nice max width ===== */
+.container {
+  max-width: 1120px;   /* Tweak to taste (e.g., 1040, 1200) */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+/* ===== Advanced filter row alignment & spacing ===== */
+/* The grid that holds: Min exams, Min credits, Min score, Exam accepted */
+.adv-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 14px;
+  align-items: end;        /* bottoms of inputs line up */
+  justify-items: stretch;  /* inputs take full cell width */
+  margin-top: 10px;
+}
+
+/* Labels over inputs look tidy */
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Make sure dark inputs stretch inside the grid cells */
+.input.input--dark {
+  width: 100%;
+}
+
+/* ===== Center the “+ Add School” button under filters ===== */
+.add-col {
+  grid-column: 1 / -1;   /* span all columns */
+  justify-self: center;  /* center the button itself */
+  margin-top: 6px;
+}
+
+/* Optional: slightly tighten spacing below toolbar */
+.topbar .filters {
+  margin-top: 8px;
+}
+
+/* (Optional) nice responsive step for smaller screens */
+@media (max-width: 980px) {
+  .adv-grid {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
   }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+  .add-col { margin-top: 10px; }
 }
