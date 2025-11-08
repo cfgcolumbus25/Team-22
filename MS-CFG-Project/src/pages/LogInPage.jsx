@@ -2,7 +2,7 @@ import { useState } from "react";
 import { registerUser, loginUser, ROLES } from "../auth/authService";
 import "./LogInPage.css";
 
-export default function LogInPage({ onLoginSuccess }) {
+export default function LogInPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,13 +20,13 @@ export default function LogInPage({ onLoginSuccess }) {
         console.log("🔐 Attempting to login:", email);
         const user = await loginUser(email, password);
         console.log("✅ Login successful:", user.email);
-        if (onLoginSuccess) onLoginSuccess();
+        // Redirect will happen automatically via ProtectedRoute
       } else {
         // Register - Only learners can register through the form
         console.log("📝 Attempting to register as learner:", email);
         const user = await registerUser(email, password, ROLES.LEARNER);
         console.log("✅ Registration successful:", user.email, "Role: learner");
-        if (onLoginSuccess) onLoginSuccess();
+        // Redirect will happen automatically via ProtectedRoute
       }
     } catch (err) {
       console.error("❌ Auth error:", err);
