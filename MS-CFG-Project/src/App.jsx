@@ -10,10 +10,8 @@ import MSAdminDash from './pages/MSAdminDash'
 function App() {
 
   return (
-    <div>
-    <LearnerDash/>
-   </div>
-  );
+
+  
       <div>
         <Routes>
           <Route path="/" element={<LogInPage />} />
@@ -23,7 +21,7 @@ function App() {
           <Route path="/admin" element={<MSAdminDash />} />
         </Routes>
     </div>
-  )
+  );
 }
 
 export default App
