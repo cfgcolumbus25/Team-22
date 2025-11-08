@@ -6,7 +6,6 @@ export default function LogInPage({ onLoginSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState(ROLES.LEARNER);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -23,10 +22,10 @@ export default function LogInPage({ onLoginSuccess }) {
         console.log("✅ Login successful:", user.email);
         if (onLoginSuccess) onLoginSuccess();
       } else {
-        // Register
-        console.log("📝 Attempting to register:", { email, role });
-        const user = await registerUser(email, password, role);
-        console.log("✅ Registration successful:", user.email, "Role:", role);
+        // Register - Only learners can register through the form
+        console.log("📝 Attempting to register as learner:", email);
+        const user = await registerUser(email, password, ROLES.LEARNER);
+        console.log("✅ Registration successful:", user.email, "Role: learner");
         if (onLoginSuccess) onLoginSuccess();
       }
     } catch (err) {
@@ -89,20 +88,19 @@ export default function LogInPage({ onLoginSuccess }) {
 
           {!isLogin && (
             <div className="form-group">
-              <label htmlFor="role">Role:</label>
-              <select
-                id="role"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                disabled={loading}
-              >
-                <option value={ROLES.LEARNER}>Learner</option>
-                <option value={ROLES.INSTITUTION}>Institution</option>
-                <option value={ROLES.ADMIN}>Admin</option>
-              </select>
-              <small>
-                Note: Admin role should typically be assigned manually for security.
-              </small>
+              <div style={{ 
+                background: "#e3f2fd", 
+                padding: "0.75rem", 
+                borderRadius: "6px", 
+                marginBottom: "1rem",
+                fontSize: "0.9rem",
+                color: "#1976d2"
+              }}>
+                <strong>📝 Creating a Learner Account</strong>
+                <p style={{ margin: "0.5rem 0 0 0", fontSize: "0.85rem" }}>
+                  New accounts are created as Learners. Admin and Institution accounts are preset for demo purposes.
+                </p>
+              </div>
             </div>
           )}
 
@@ -126,6 +124,23 @@ export default function LogInPage({ onLoginSuccess }) {
               : "Already have an account? Login"}
           </button>
         </div>
+
+        {isLogin && (
+          <div style={{ 
+            marginTop: "1.5rem", 
+            padding: "1rem", 
+            background: "#f5f5f5", 
+            borderRadius: "6px",
+            fontSize: "0.85rem",
+            color: "#666"
+          }}>
+            <strong>🔑 Demo Accounts:</strong>
+            <ul style={{ margin: "0.5rem 0 0 0", paddingLeft: "1.5rem" }}>
+              <li>Admin: Check Firebase Console for preset credentials</li>
+              <li>Institution: Check Firebase Console for preset credentials</li>
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
