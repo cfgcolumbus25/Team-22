@@ -41,8 +41,16 @@
   color: #888;
 }
 
-.institution-dash h1 {
-    border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 8px;
-    margin-bottom: 12px;
+.institution-dash {
+  opacity: 1 !important;   /* kills any inherited fade */
+  filter: none !important;  /* in case a dimming filter was applied */
 }
+
+.institution-dash,
+.institution-dash h1,
+.institution-dash th,
+.institution-dash td,
+.institution-dash button {
+  color: #000 !important;
+}
+
