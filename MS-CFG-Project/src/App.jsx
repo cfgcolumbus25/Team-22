@@ -4,14 +4,11 @@ import  {LearnerDash} from './pages/LearnerDash';
 import { Routes, Route, Navigate } from 'react-router-dom'
 import LogInPage from './pages/LogInPage'
 import InstitutionDash from './pages/InstitutionDash'
-import LearnerDash from './pages/LearnerDash'
 import MSAdminDash from './pages/MSAdminDash'
 
 function App() {
 
   return (
-
-  
       <div>
         <Routes>
           <Route path="/" element={<LogInPage />} />
