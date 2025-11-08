@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './App.css'
+import  {LearnerDash} from './pages/LearnerDash';
 import { Routes, Route, Navigate } from 'react-router-dom'
 import LogInPage from './pages/LogInPage'
 import InstitutionDash from './pages/InstitutionDash'
@@ -7,9 +8,12 @@ import LearnerDash from './pages/LearnerDash'
 import MSAdminDash from './pages/MSAdminDash'
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
+    <div>
+    <LearnerDash/>
+   </div>
+  );
       <div>
         <Routes>
           <Route path="/" element={<LogInPage />} />
