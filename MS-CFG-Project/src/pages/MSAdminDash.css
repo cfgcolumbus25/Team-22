@@ -1,0 +1,156 @@
+/* MSAdminDash.css
+  Scoped styles for the MS admin dashboard. These class names are unique to
+  avoid collisions with existing project styles. You can safely extend or
+  override them later in a global stylesheet if needed. */
+
+/* Theme variables - change these to match ModernStates color palette. For
+   example, set --ms-primary to the hex used by http://modernstates.org/ so
+   the dashboard matches the brand. */
+:root {
+  /* For ModernStates branding the page is predominantly white with
+     black typography. Keep accent colors for status backgrounds only. */
+  --ms-primary: #000000; /* black primary text */
+  --ms-accent: #e6f7ec;  /* light green background for verified */
+  --ms-danger: #fdecea;  /* light red/pink background for unverified */
+}
+
+.ms-admin-container {
+  /* Center the main content and provide breathing room */
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  /* Use black text across the admin dashboard to match ModernStates' clean
+     black-on-white typographic style. */
+  color: var(--ms-primary);
+}
+
+/* Full page wrapper to ensure the viewport background is white and the
+   dashboard card is centered both vertically and horizontally. This overrides
+   any dark global theme for this page only so the Admin experience uses the
+   ModernStates white background and black typography. */
+.ms-page-wrapper {
+  background: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center; /* vertical center */
+  justify-content: center; /* horizontal center */
+  padding: 2rem; /* safe spacing on small screens */
+}
+
+.ms-header {
+  text-align: left;
+  margin-bottom: 1rem;
+}
+.ms-title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700; /* bold Admin Dashboard title per branding request */
+  color: var(--ms-primary);
+}
+.ms-subtitle {
+  margin: 0.25rem 0 0.75rem 0;
+  color: var(--ms-primary);
+}
+
+.ms-reported-card {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  padding: 1rem;
+  /* Keep the card visually light and flat (no heavy glaze). */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.ms-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.ms-badge {
+  background: #f3f3f3; /* neutral badge background to avoid glossy look */
+  color: var(--ms-primary);
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+}
+
+.ms-table-wrap {
+  overflow-x: auto;
+}
+.ms-school-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.ms-school-table th,
+.ms-school-table td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+}
+.ms-school-row:nth-child(even) {
+  background: #fbfbfb;
+}
+
+.ms-td-name {
+  font-weight: 600;
+}
+.ms-school-table th { color: var(--ms-primary); font-weight: 700; }
+.ms-td-count {
+  width: 120px;
+}
+.ms-td-region {
+  width: 100px;
+}
+.ms-td-link a {
+  color: var(--ms-primary);
+  text-decoration: underline;
+}
+.ms-muted {
+  color: #333;
+  font-style: italic;
+}
+
+.ms-flag {
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-weight: 700;
+  color: var(--ms-primary); /* keep the text black */
+}
+.ms-flag-verified { background: var(--ms-accent); }
+.ms-flag-unverified { background: var(--ms-danger); }
+
+.ms-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+.ms-btn {
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #d0d0d0;
+  background: #fff;
+  cursor: pointer;
+}
+.ms-btn:hover { box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.ms-btn-verify { background: var(--ms-primary); color: white; border-color: var(--ms-primary); }
+.ms-btn-view { background: #f5f5f5; }
+
+/* Inside the admin page wrapper ensure View button text is black */
+.ms-page-wrapper .ms-btn-view {
+  color: var(--ms-primary) !important;
+  background: #f5f5f5 !important;
+  border-color: #d0d0d0 !important;
+}
+
+.ms-empty {
+  padding: 1rem;
+  text-align: center;
+  color: #666;
+}
+
+.ms-card-footer {
+  margin-top: 0.75rem;
+  border-top: 1px dashed #eee;
+  padding-top: 0.5rem;
+  color: #555;
+}
