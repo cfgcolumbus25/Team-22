@@ -1,0 +1,247 @@
+/* --- General Body and Container --- */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8; /* Light gray background */
+    margin: 0;
+    padding: 30px;
+    color: #333;
+}
+
+.student-profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* --- Profile Header Card --- */
+.profile-header-card {
+    background-color: white;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #e0e7ff; /* Light blue background for initials */
+    color: #3f51b5; /* Darker blue text */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.header-info .student-name {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.header-info .student-email {
+    font-size: 0.95rem;
+    color: #6c757d;
+    margin: 5px 0 0;
+}
+
+/* --- Content Grid --- */
+.profile-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    gap: 30px;
+}
+
+/* Make exam scores take full width below 2 columns */
+.exam-scores-card {
+    grid-column: 1 / -1; /* Spans all columns */
+}
+
+/* --- Generic Info Card Style --- */
+.info-card {
+    background-color: white;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.info-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+/* --- Basic Information Card --- */
+.basic-info-card .info-item {
+    display: flex;
+    align-items: flex-start; /* Align icon and text at the top */
+    margin-bottom: 20px;
+}
+
+.basic-info-card .info-item:last-child {
+    margin-bottom: 0;
+}
+
+.basic-info-card .info-icon {
+    font-size: 1.4rem;
+    color: #6c757d;
+    margin-right: 15px;
+    margin-top: 3px; /* Adjust icon alignment */
+}
+
+.basic-info-card .info-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin: 0;
+}
+
+.basic-info-card .info-value {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    margin: 3px 0 0;
+}
+
+/* --- Target Universities Card --- */
+.university-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+.university-item:last-child {
+    border-bottom: none;
+}
+
+.university-icon {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-right: 15px;
+}
+
+.university-name {
+    flex-grow: 1;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.university-status-tag {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: white;
+    min-width: 60px; /* Ensure tags have similar width */
+    text-align: center;
+}
+
+/* University Status Tag Colors */
+.status-reach {
+    background-color: #dc3545; /* Red */
+}
+.status-target {
+    background-color: #ffc107; /* Yellow */
+    color: #333; /* Darker text for yellow */
+}
+.status-safety {
+    background-color: #28a745; /* Green */
+}
+
+/* --- CLEP Exam Scores Card --- */
+.exam-scores-card {
+    margin-top: 30px; /* Space between the upper cards and this one */
+}
+
+.exam-scores-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.total-credits {
+    font-size: 0.95rem;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+.credits-icon {
+    font-size: 1.2rem;
+    margin-right: 8px;
+    color: #007bff; /* Blue for the icon */
+}
+
+.exam-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.exam-table th, .exam-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.exam-table th {
+    background-color: #f8f9fa; /* Light gray header */
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.exam-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.exam-table td {
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.exam-status-tag {
+    display: inline-flex; /* Use flex to align icon and text */
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.exam-status-tag.passed {
+    background-color: #e6ffed; /* Light green */
+    color: #28a745; /* Green text */
+}
+
+.exam-status-tag .check-icon {
+    font-size: 1rem;
+    margin-right: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .profile-content-grid {
+        grid-template-columns: 1fr; /* Stack columns on smaller screens */
+    }
+    .profile-header-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    .avatar {
+        margin-bottom: 15px;
+        margin-right: 0;
+    }
+    .exam-scores-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
