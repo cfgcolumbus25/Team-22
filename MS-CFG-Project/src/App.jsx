@@ -1,15 +1,24 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-import {InstitutionDash} from './pages/InstitutionDash.jsx'
+import { Routes, Route } from 'react-router-dom'
+import LogInPage from './pages/LogInPage'
+import InstitutionDash from './pages/InstitutionDash'
+import LearnerDash from './pages/LearnerDash'
+import MSAdminDash from './pages/MSAdminDash'
 
 function App() {
-  return(
-    <div>
-      <InstitutionDash/>    
+  const [count, setCount] = useState(0)
+
+  return (
+      <div>
+        <Routes>
+          <Route path="/login" element={<LogInPage />} />
+          <Route path="/institution" element={<InstitutionDash />} />
+          <Route path="/learner" element={<LearnerDash />} />
+          <Route path="/admin" element={<MSAdminDash />} />
+        </Routes>
     </div>
-  );
+  )
 }
 
 export default App

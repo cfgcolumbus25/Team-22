@@ -1,0 +1,136 @@
+/* General Reset/Setup (Optional but Recommended) */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4; /* A slight default background for context */
+}
+
+/* --- Layout and Background --- */
+.background-area {
+    min-height: 100vh;
+    min-width: 100vw;
+    background-color: #007bff; /* The bright blue background */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 50px; /* Space for the logo at the top */
+    padding-bottom: 50px;
+}
+
+/* --- Logo Box --- */
+.logo-box {
+    background-color: white;
+    width: 300px;
+    height: 100px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px; /* Space between logo and card */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo-image {
+    max-width: 200px;
+    max-height: 200px;
+    object-fit: contain;
+}
+
+/* --- Login Card --- */
+.login-card {
+    background-color: white;
+    padding: 40px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 400px; /* Max width for the card */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* --- Text Styles --- */
+.welcome-text {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.subtitle-text {
+    color: #6c757d;
+    margin-bottom: 30px;
+    font-size: 0.95rem;
+}
+
+/* --- Form and Inputs --- */
+.login-form {
+    text-align: left;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    /* Adding a placeholder icon for the password, you'd usually use an SVG icon */
+    background-repeat: no-repeat;
+    background-position: 15px center;
+}
+
+/* Styling for the Password Row to align the link */
+.password-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.forgot-password {
+    font-size: 0.85rem;
+    color: #007bff;
+    text-decoration: none;
+}
+
+/* --- Button --- */
+.sign-in-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #1a1a1a; /* Dark button color */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s;
+}
+
+.sign-in-button:hover {
+    background-color: #333;
+}
+
+/* --- Sign Up Prompt --- */
+.signup-prompt {
+    margin-top: 30px;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.signup-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
