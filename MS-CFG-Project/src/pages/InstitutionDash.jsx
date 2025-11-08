@@ -1,5 +1,5 @@
 export const InstitutionDash = ()=> {
-    return (
+    return(
         <div>
             <div className = "institution-dash">
                 <h1> Last updated: 09/25/25</h1>
@@ -16,10 +16,12 @@ export const InstitutionDash = ()=> {
                         <td>American Government</td>
                         <td>52</td>
                         <td>3.0</td>
-                        <td>12/062024</td>
+                        <td>12/06/2024</td>
+                        <td><input type = "checkbox" class = "row-select" aria-label = "Select row"></input></td>
                     </tr>
                 </table>
+                </div>
+                <button id = "delete-btn" disabled>Delete Selected</button>
             </div>
-        </div>
     );
 };
