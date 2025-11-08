@@ -5,6 +5,7 @@ import LogInPage from './pages/LogInPage'
 import InstitutionDash from './pages/InstitutionDash'
 import LearnerDash from './pages/LearnerDash'
 import MSAdminDash from './pages/MSAdminDash'
+import StudentProfile from './pages/StudentProfile'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -17,6 +18,7 @@ function App() {
           <Route path="/institution" element={<InstitutionDash />} />
           <Route path="/learner" element={<LearnerDash />} />
           <Route path="/admin" element={<MSAdminDash />} />
+          <Route path="/profile" element={<StudentProfile />} />
         </Routes>
     </div>
   )
