@@ -1,215 +1,465 @@
+import { useEffect, useMemo, useState } from "react";
+import "../App.css";
 import { useAuth } from "../auth/useAuth";
 import { logoutUser } from "../auth/authService";
-import { useState, useEffect } from "react";
-import { getAllColleges, getExamsByCollege } from "../services/collegeService";
-import FlagExamButton from "../components/FlagExamButton";
 
-export default function LearnerDash() {
-  const { user, userData, loading } = useAuth();
+// ---------- utils ----------
+const money = (cents = 0) =>
+  (Number(cents || 0) / 100).toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  });
+
+const shortDate = (ts) => {
+  if (!ts) return "—";
+  if (typeof ts === "object" && "_seconds" in ts)
+    return new Date(ts._seconds * 1000).toLocaleDateString();
+  const d = new Date(ts);
+  return isNaN(d.getTime()) ? "—" : d.toLocaleDateString();
+};
+
+// ---------- API ----------
+const API = {
+  async listColleges() {
+    const r = await fetch("/api/colleges");
+    if (!r.ok) throw new Error("load colleges failed");
+    return r.json();
+  },
+  async getCollege(id) {
+    const r = await fetch(`/api/colleges/${id}`);
+    if (!r.ok) throw new Error("load college failed");
+    return r.json();
+  },
+  async listExams(collegeId) {
+    const r = await fetch(`/api/colleges/${collegeId}/exams`);
+    if (!r.ok) throw new Error("load exams failed");
+    return r.json();
+  },
+  async flagExam(collegeId, examId, reason, contact) {
+    const r = await fetch(`/api/colleges/${collegeId}/exams/${examId}/flags`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reason, contact }),
+    });
+    if (!r.ok) throw new Error("flag exam failed");
+    return r.json(); // { ok: true, flagged: number }
+  },
+};
+
+// ---------- component ----------
+export default function LearnerDashboard() {
+  const { user, loading: authLoading } = useAuth();
   const [loggingOut, setLoggingOut] = useState(false);
   const [colleges, setColleges] = useState([]);
-  const [selectedCollege, setSelectedCollege] = useState(null);
-  const [exams, setExams] = useState([]);
-  const [loadingColleges, setLoadingColleges] = useState(true);
-  const [loadingExams, setLoadingExams] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState({});
+  const [q, setQ] = useState("");
+  const [sortKey, setSortKey] = useState("school");
+  const [sortDir, setSortDir] = useState("asc");
 
-  useEffect(() => {
-    loadColleges();
-  }, []);
+  // restored filters
+  const [minSchoolExams, setMinSchoolExams] = useState("");
+  const [minExamCredits, setMinExamCredits] = useState("");
+  const [minExamScore, setMinExamScore] = useState("");
+  const [examFilter, setExamFilter] = useState("");
+  const [onlyFlagged, setOnlyFlagged] = useState(false);
 
-  const loadColleges = async () => {
-    try {
-      setLoadingColleges(true);
-      console.log("🔄 Loading colleges...");
-      const collegesData = await getAllColleges();
-      console.log("✅ Colleges loaded:", collegesData);
-      setColleges(collegesData);
-      if (collegesData.length === 0) {
-        console.warn("⚠️ No colleges found in Firestore. Make sure you have colleges collection set up.");
-      }
-    } catch (error) {
-      console.error("❌ Error loading colleges:", error);
-      alert(`Error loading colleges: ${error.message}. Check console for details.`);
-    } finally {
-      setLoadingColleges(false);
-    }
-  };
-
-  const handleCollegeSelect = async (collegeId) => {
-    if (!collegeId) {
-      setSelectedCollege(null);
-      setExams([]);
-      return;
-    }
-    
-    try {
-      setLoadingExams(true);
-      setSelectedCollege(collegeId);
-      console.log(`🔄 Loading exams for college: ${collegeId}`);
-      const examsData = await getExamsByCollege(collegeId);
-      console.log("✅ Exams loaded:", examsData);
-      setExams(examsData);
-      if (examsData.length === 0) {
-        console.warn(`⚠️ No exams found for college ${collegeId}. Check if the exams subcollection exists.`);
-      }
-    } catch (error) {
-      console.error("❌ Error loading exams:", error);
-      alert(`Error loading exams: ${error.message}. Check console for details.`);
-      setExams([]);
-    } finally {
-      setLoadingExams(false);
-    }
-  };
+  // flag modal
+  const [flagOpen, setFlagOpen] = useState(null);
+  const [flagText, setFlagText] = useState("");
+  const [flagContact, setFlagContact] = useState("");
 
   const handleLogout = async () => {
     setLoggingOut(true);
     try {
       await logoutUser();
-    } catch (error) {
-      console.error("Error logging out:", error);
+    } catch (err) {
+      console.error("Error logging out:", err);
     } finally {
       setLoggingOut(false);
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const list = await API.listColleges();
+        setColleges(list);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const ensureExamsLoaded = async (id) => {
+    const idx = colleges.findIndex((c) => c.id === id);
+    if (idx < 0) return;
+    const col = colleges[idx];
+    if (col.exams) return;
+
+    const details = await API.getCollege(id);
+    const exams = details.exams ?? (await API.listExams(id)) ?? [];
+    const updated = [...colleges];
+    updated[idx] = { ...col, exams };
+    setColleges(updated);
+  };
+
+  const toggleOpen = async (id) => {
+    const next = { ...open, [id]: !open[id] };
+    setOpen(next);
+    if (!open[id]) await ensureExamsLoaded(id);
+  };
+
+  const submitFlag = async () => {
+    if (!flagOpen) return;
+    if (!flagText.trim()) return alert("Please describe the issue.");
+    try {
+      const { flagged } = await API.flagExam(
+        flagOpen.collegeId,
+        flagOpen.examId,
+        flagText,
+        flagContact
+      );
+      setColleges((prev) =>
+        prev.map((c) =>
+          c.id !== flagOpen.collegeId
+            ? c
+            : {
+                ...c,
+                exams: (c.exams || []).map((e) =>
+                  e.id === flagOpen.examId ? { ...e, flagged } : e
+                ),
+              }
+        )
+      );
+      setFlagOpen(null);
+    } catch {
+      alert("Failed to flag exam.");
+    }
+  };
+
+  const sortBtn = (label, key) => (
+    <button
+      className={`chip ${sortKey === key ? "chip--active" : ""}`}
+      onClick={() => {
+        if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+        else {
+          setSortKey(key);
+          setSortDir("asc");
+        }
+      }}
+    >
+      {label}
+      {sortKey === key && (
+        <span className="chip-caret">{sortDir === "asc" ? "▴" : "▾"}</span>
+      )}
+    </button>
+  );
+
+  const collegeFlagsTotal = (c) =>
+    (c.exams || []).reduce((sum, e) => sum + (Number(e.flagged || 0) || 0), 0);
+
+  const filteredSorted = useMemo(() => {
+    const text = q.trim().toLowerCase();
+    const wantedExam = examFilter.trim().toLowerCase();
+
+    let rows = colleges.filter((c) => {
+      if (
+        text &&
+        !(
+          c.name.toLowerCase().includes(text) ||
+          c.state?.toLowerCase().includes(text) ||
+          String(c.zipCode).includes(text)
+        )
+      )
+        return false;
+
+      const minEx = Number(minSchoolExams || 0);
+      if (minEx > 0 && typeof c.examsCount === "number" && c.examsCount < minEx)
+        return false;
+
+      if (wantedExam && c.exams) {
+        const ok = c.exams.some((e) =>
+          (e.examName || "").toLowerCase().includes(wantedExam)
+        );
+        if (!ok) return false;
+      }
+      return true;
+    });
+
+    const cmp = (a, b) => {
+      let x, y;
+      switch (sortKey) {
+        case "state":
+          x = (a.state || "").toUpperCase();
+          y = (b.state || "").toUpperCase();
+          break;
+        case "zip":
+          x = String(a.zipCode || "");
+          y = String(b.zipCode || "");
+          break;
+        case "flags":
+          x = collegeFlagsTotal(a);
+          y = collegeFlagsTotal(b);
+          break;
+        default:
+          x = (a.name || "").toUpperCase();
+          y = (b.name || "").toUpperCase();
+      }
+      if (x < y) return sortDir === "asc" ? -1 : 1;
+      if (x > y) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    };
+    return rows.sort(cmp);
+  }, [
+    colleges,
+    q,
+    sortKey,
+    sortDir,
+    minSchoolExams,
+    examFilter,
+  ]);
+
+  if (authLoading || loading)
+    return <div className="empty">Loading data...</div>;
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "1200px", margin: "0 auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
-        <h1>Learner Dashboard</h1>
-        <button 
-          onClick={handleLogout} 
-          disabled={loggingOut}
+    <div className="shell">
+      <div className="container">
+        <header
+          className="topbar"
           style={{
-            padding: "0.5rem 1rem",
-            background: "#dc3545",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer"
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            backgroundColor: "#111827",
+            padding: "1rem 2rem",
+            borderBottom: "1px solid #1f2937",
           }}
         >
-          {loggingOut ? "Logging out..." : "Logout"}
-        </button>
-      </div>
+          <h1 className="brand">CLEP Acceptance (Learner View)</h1>
 
-      <div style={{ background: "#f5f5f5", padding: "1.5rem", borderRadius: "8px", marginBottom: "2rem" }}>
-        <h2>Welcome, {userData?.email || user?.email}!</h2>
-        <p><strong>Role:</strong> {userData?.role || "Unknown"}</p>
-      </div>
+          <div className="filters">
+            <div className="searchbox">
+              <input
+                className="input input--dark search-input"
+                placeholder="Search schools, state, zip…"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+              />
+              <span className="kbd">/</span>
+            </div>
 
-      <div style={{ background: "white", padding: "1.5rem", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)", marginBottom: "2rem" }}>
-        <h2>View Colleges and Exams</h2>
-        <p style={{ color: "#666", marginBottom: "1rem" }}>
-          Select a college to view its CLEP exam requirements. You can flag exams if you notice any errors.
-        </p>
+            <div className="chip-row">
+              {sortBtn("School", "school")}
+              {sortBtn("State", "state")}
+              {sortBtn("Zip", "zip")}
+              {sortBtn("# Exams", "exams")}
+              {sortBtn("Flags", "flags")}
+            </div>
 
-        {loadingColleges ? (
-          <p>Loading colleges...</p>
-        ) : (
-          <div style={{ marginBottom: "1.5rem" }}>
-            <label htmlFor="college-select" style={{ display: "block", marginBottom: "0.5rem", fontWeight: "500" }}>
-              Select a College:
-            </label>
-            <select
-              id="college-select"
-              value={selectedCollege || ""}
-              onChange={(e) => handleCollegeSelect(e.target.value)}
-              style={{
-                width: "100%",
-                maxWidth: "400px",
-                padding: "0.5rem",
-                border: "1px solid #ddd",
-                borderRadius: "4px",
-                fontSize: "1rem"
-              }}
-            >
-              <option value="">-- Select a college --</option>
-              {colleges.map(college => (
-                <option key={college.id} value={college.id}>
-                  {college.name || college.id} {college.state ? `(${college.state})` : ''}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+            <div className="adv-grid">
+              <label className="label">
+                Min exams (school)
+                <input
+                  className="input input--dark"
+                  placeholder="e.g. 10"
+                  inputMode="numeric"
+                  value={minSchoolExams}
+                  onChange={(e) => setMinSchoolExams(e.target.value)}
+                />
+              </label>
+              <label className="label">
+                Min credits (exam)
+                <input
+                  className="input input--dark"
+                  placeholder="e.g. 3"
+                  inputMode="numeric"
+                  value={minExamCredits}
+                  onChange={(e) => setMinExamCredits(e.target.value)}
+                />
+              </label>
+              <label className="label">
+                Min score (exam)
+                <input
+                  className="input input--dark"
+                  placeholder="e.g. 50"
+                  inputMode="numeric"
+                  value={minExamScore}
+                  onChange={(e) => setMinExamScore(e.target.value)}
+                />
+              </label>
+              <label className="label">
+                Exam accepted
+                <input
+                  className="input input--dark"
+                  placeholder="e.g. Biology, Calculus…"
+                  value={examFilter}
+                  onChange={(e) => setExamFilter(e.target.value)}
+                />
+              </label>
 
-        {selectedCollege && (
-          <div>
-            {loadingExams ? (
-              <p>Loading exams...</p>
-            ) : exams.length === 0 ? (
-              <div style={{ padding: "1rem", background: "#fff3cd", borderRadius: "8px", border: "1px solid #ffc107" }}>
-                <p style={{ color: "#666", margin: 0 }}>
-                  <strong>No exams found for this college.</strong>
-                </p>
-                <p style={{ color: "#666", marginTop: "0.5rem", fontSize: "0.9rem" }}>
-                  Make sure the college document has an <code>exams</code> subcollection in Firestore.
-                </p>
-              </div>
-            ) : (
-              <div>
-                <h3>
-                  Exams for {colleges.find(c => c.id === selectedCollege)?.name || selectedCollege}:
-                </h3>
-                <div style={{ display: "grid", gap: "1.5rem", marginTop: "1rem" }}>
-                  {exams.map(exam => (
-                    <div
-                      key={exam.id}
-                      style={{
-                        padding: "1rem",
-                        background: "#f8f9fa",
-                        border: "1px solid #dee2e6",
-                        borderRadius: "8px"
-                      }}
-                    >
-                      <h4 style={{ marginTop: 0 }}>{exam.examName || exam.id}</h4>
-                      {exam.minScore !== undefined && (
-                        <p><strong>Minimum Score:</strong> {exam.minScore}</p>
-                      )}
-                      {exam.credits !== undefined && (
-                        <p><strong>Credits:</strong> {exam.credits}</p>
-                      )}
-                      {exam.transcriptChargeCents !== undefined && (
-                        <p><strong>Transcript Charge:</strong> ${(exam.transcriptChargeCents / 100).toFixed(2)}</p>
-                      )}
-                      {exam.flagged !== undefined && exam.flagged > 0 && (
-                        <p style={{ color: "#dc3545", fontWeight: "500" }}>
-                          ⚠️ This exam has been flagged {exam.flagged} time(s)
-                        </p>
-                      )}
-                      <FlagExamButton 
-                        examId={exam.id} 
-                        collegeId={selectedCollege}
-                        examName={exam.examName || exam.id}
-                      />
-                    </div>
-                  ))}
+              <label className="label" style={{ gridColumn: "1 / -1" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <input
+                    type="checkbox"
+                    checked={onlyFlagged}
+                    onChange={(e) => setOnlyFlagged(e.target.checked)}
+                    style={{ width: 18, height: 18, cursor: "pointer" }}
+                  />
+                  Show only flagged exams
                 </div>
-              </div>
-            )}
+              </label>
+            </div>
           </div>
-        )}
+
+          <button
+            onClick={handleLogout}
+            disabled={loggingOut}
+            style={{
+              padding: "0.6rem 1.2rem",
+              background: "#dc3545",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              fontWeight: "500",
+            }}
+          >
+            {loggingOut ? "Logging out..." : "Logout"}
+          </button>
+        </header>
+
+        <main className="stack">
+          {filteredSorted.map((c) => {
+            const visibleExams =
+              (c.exams || []).filter((e) => {
+                if (onlyFlagged && !(Number(e.flagged || 0) > 0)) return false;
+                if (
+                  minExamCredits &&
+                  Number(e.credits || 0) < Number(minExamCredits)
+                )
+                  return false;
+                if (
+                  minExamScore &&
+                  Number(e.minScore || 0) < Number(minExamScore)
+                )
+                  return false;
+                if (
+                  examFilter &&
+                  !e.examName.toLowerCase().includes(examFilter.toLowerCase())
+                )
+                  return false;
+                return true;
+              }) || [];
+
+            return (
+              <section key={c.id} className="college-card">
+                <button
+                  className="row-head"
+                  onClick={() => toggleOpen(c.id)}
+                  aria-expanded={!!open[c.id]}
+                >
+                  <span className={`chev ${open[c.id] ? "open" : ""}`} />
+                  <span className="school">{c.name || c.id}</span>
+                  <div className="meta">
+                    {c.state && <span className="badge">{c.state}</span>}
+                    {c.zipCode && <span className="badge">{c.zipCode}</span>}
+                  </div>
+                </button>
+
+                {open[c.id] && (
+                  <div className="card-body">
+                    <table className="tbl">
+                      <thead>
+                        <tr>
+                          <th>Exam</th>
+                          <th>Minimum Score</th>
+                          <th>Credits</th>
+                          <th>Transcript Charge</th>
+                          <th>Flags</th>
+                          <th>Last Modified</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {visibleExams.length > 0 ? (
+                          visibleExams.map((e) => (
+                            <tr key={e.id}>
+                              <td>{e.examName}</td>
+                              <td>{e.minScore ?? "—"}</td>
+                              <td>{e.credits ?? "—"}</td>
+                              <td>{money(e.transcriptChargeCents ?? 0)}</td>
+                              <td>{e.flagged ?? 0}</td>
+                              <td>{shortDate(e.lastModified)}</td>
+                              <td>
+                                <button
+                                  className="btn btn-soft"
+                                  onClick={() =>
+                                    setFlagOpen({
+                                      collegeId: c.id,
+                                      examId: e.id,
+                                    })
+                                  }
+                                >
+                                  Flag
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={7}>No exams available.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </section>
+            );
+          })}
+        </main>
       </div>
 
-      <div style={{ 
-        padding: "1rem", 
-        background: "#e7f3ff", 
-        borderRadius: "8px",
-        border: "1px solid #b3d9ff"
-      }}>
-        <h3 style={{ marginTop: 0 }}>📝 Learner Features</h3>
-        <ul style={{ marginBottom: 0 }}>
-          <li>View available CLEP exams from different colleges</li>
-          <li>Search colleges and their exam requirements</li>
-          <li>🚩 Flag exams if you notice errors or incorrect information</li>
-          <li>Track your exam progress</li>
-        </ul>
-      </div>
+      {flagOpen && (
+        <div className="modal">
+          <div className="dialog">
+            <h3>Flag this exam</h3>
+            <p className="muted">
+              Briefly explain what looks inaccurate. Your feedback helps keep data
+              up to date.
+            </p>
+            <textarea
+              className="input input--dark textarea"
+              rows={5}
+              placeholder="e.g. Minimum score is listed wrong"
+              value={flagText}
+              onChange={(e) => setFlagText(e.target.value)}
+            />
+            <label className="label" style={{ marginTop: 8 }}>
+              (Optional) Contact email
+              <input
+                className="input input--dark"
+                placeholder="you@example.com"
+                value={flagContact}
+                onChange={(e) => setFlagContact(e.target.value)}
+              />
+            </label>
+            <div className="btn-row end" style={{ marginTop: 10 }}>
+              <button className="btn btn-soft" onClick={() => setFlagOpen(null)}>
+                Cancel
+              </button>
+              <button className="btn btn-primary" onClick={submitFlag}>
+                Submit Flag
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-

@@ -16,21 +16,14 @@ export default function LogInPage() {
 
     try {
       if (isLogin) {
-        // Login
-        console.log("🔐 Attempting to login:", email);
         const user = await loginUser(email, password);
         console.log("✅ Login successful:", user.email);
-        // Redirect will happen automatically via ProtectedRoute
       } else {
-        // Register - Only learners can register through the form
-        console.log("📝 Attempting to register as learner:", email);
         const user = await registerUser(email, password, ROLES.LEARNER);
-        console.log("✅ Registration successful:", user.email, "Role: learner");
-        // Redirect will happen automatically via ProtectedRoute
+        console.log("✅ Registration successful:", user.email);
       }
     } catch (err) {
       console.error("❌ Auth error:", err);
-      // Provide user-friendly error messages
       let errorMessage = "An error occurred";
       if (err.code === "auth/email-already-in-use") {
         errorMessage = "This email is already registered. Please login instead.";
@@ -54,18 +47,17 @@ export default function LogInPage() {
   };
 
   return (
-    <div className="login-container">
+    <div className="login-page" style={{ paddingLeft: "500px" }}>
       <div className="login-card">
-        <h2>{isLogin ? "Login" : "Sign Up"}</h2>
-        
+        <h2 className="login-title">{isLogin ? "Login" : "Sign Up"}</h2>
+
         {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email">Email:</label>
+            <label>Email:</label>
             <input
               type="email"
-              id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -74,10 +66,9 @@ export default function LogInPage() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password:</label>
+            <label>Password:</label>
             <input
               type="password"
-              id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -87,55 +78,37 @@ export default function LogInPage() {
           </div>
 
           {!isLogin && (
-            <div className="form-group">
-              <div style={{ 
-                background: "#e3f2fd", 
-                padding: "0.75rem", 
-                borderRadius: "6px", 
-                marginBottom: "1rem",
-                fontSize: "0.9rem",
-                color: "#1976d2"
-              }}>
-                <strong>📝 Creating a Learner Account</strong>
-                <p style={{ margin: "0.5rem 0 0 0", fontSize: "0.85rem" }}>
-                  New accounts are created as Learners. Admin and Institution accounts are preset for demo purposes.
-                </p>
-              </div>
+            <div className="info-box">
+              <strong>📝 Creating a Learner Account</strong>
+              <p>
+                New accounts are created as Learners. Admin and Institution
+                accounts are preset for demo purposes.
+              </p>
             </div>
           )}
 
-          <button type="submit" disabled={loading} className="submit-btn">
+          <button type="submit" className="submit-btn" disabled={loading}>
             {loading ? "Processing..." : isLogin ? "Login" : "Sign Up"}
           </button>
         </form>
 
-        <div className="toggle-form">
-          <button
-            type="button"
-            onClick={() => {
-              setIsLogin(!isLogin);
-              setError("");
-            }}
-            className="link-button"
-            disabled={loading}
-          >
-            {isLogin
-              ? "Don't have an account? Sign up"
-              : "Already have an account? Login"}
-          </button>
-        </div>
+        <button
+          className="toggle-btn"
+          onClick={() => {
+            setIsLogin(!isLogin);
+            setError("");
+          }}
+          disabled={loading}
+        >
+          {isLogin
+            ? "Don't have an account? Sign up"
+            : "Already have an account? Login"}
+        </button>
 
         {isLogin && (
-          <div style={{ 
-            marginTop: "1.5rem", 
-            padding: "1rem", 
-            background: "#f5f5f5", 
-            borderRadius: "6px",
-            fontSize: "0.85rem",
-            color: "#666"
-          }}>
+          <div className="demo-box">
             <strong>🔑 Demo Accounts:</strong>
-            <ul style={{ margin: "0.5rem 0 0 0", paddingLeft: "1.5rem" }}>
+            <ul>
               <li>Admin: Check Firebase Console for preset credentials</li>
               <li>Institution: Check Firebase Console for preset credentials</li>
             </ul>
@@ -145,4 +118,3 @@ export default function LogInPage() {
     </div>
   );
 }
-

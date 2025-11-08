@@ -1,247 +1,408 @@
+import { useEffect, useMemo, useState } from "react";
+import "../App.css";
 import { useAuth } from "../auth/useAuth";
 import { logoutUser } from "../auth/authService";
-import { useState, useEffect } from "react";
-import { getCollegesByOwner, getExamsByCollege, updateExam, getAllColleges } from "../services/collegeService";
 
-export default function InstitutionDash() {
-  const { user, userData, loading } = useAuth();
+const money = (cents = 0) =>
+  (Number(cents || 0) / 100).toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  });
+
+const shortDate = (ts) => {
+  if (!ts) return "—";
+  if (typeof ts === "object" && "_seconds" in ts)
+    return new Date(ts._seconds * 1000).toLocaleDateString();
+  const d = new Date(ts);
+  return isNaN(d.getTime()) ? "—" : d.toLocaleDateString();
+};
+
+const API = {
+  async getCollege(id) {
+    const r = await fetch(`/api/colleges/${id}`);
+    if (!r.ok) throw new Error("load college failed");
+    return r.json();
+  },
+  async listExams(collegeId) {
+    const r = await fetch(`/api/colleges/${collegeId}/exams`);
+    if (!r.ok) throw new Error("load exams failed");
+    return r.json();
+  },
+  async addExam(collegeId, payload) {
+    const r = await fetch(`/api/colleges/${collegeId}/exams`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!r.ok) throw new Error("create exam failed");
+    return r.json();
+  },
+  async updateExam(collegeId, examId, payload) {
+    const r = await fetch(`/api/colleges/${collegeId}/exams/${examId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!r.ok) throw new Error("update exam failed");
+    return r.json();
+  },
+  async deleteExam(collegeId, examId) {
+    const r = await fetch(`/api/colleges/${collegeId}/exams/${examId}`, {
+      method: "DELETE",
+    });
+    if (!r.ok) throw new Error("delete exam failed");
+    return r.json();
+  },
+  async resetFlags(collegeId, examId) {
+    const r = await fetch(`/api/colleges/${collegeId}/exams/${examId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        flagged: 0,
+        lastFlagReason: null,
+        lastFlaggedAt: null,
+      }),
+    });
+    if (!r.ok) throw new Error("reset flags failed");
+    return r.json();
+  },
+};
+
+export default function InstitutionDashboard() {
+  const { user, userData, loading: authLoading } = useAuth();
   const [loggingOut, setLoggingOut] = useState(false);
-  const [myColleges, setMyColleges] = useState([]);
-  const [selectedCollege, setSelectedCollege] = useState(null);
+  const [college, setCollege] = useState(null);
   const [exams, setExams] = useState([]);
-  const [loadingColleges, setLoadingColleges] = useState(true);
-  const [loadingExams, setLoadingExams] = useState(false);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (user) {
-      loadMyColleges();
-    }
-  }, [user]);
+  const [addExamOpen, setAddExamOpen] = useState(false);
+  const [editExam, setEditExam] = useState(null);
 
-  const loadMyColleges = async () => {
-    try {
-      setLoadingColleges(true);
-      setError("");
-      // First try to get colleges by ownerId
-      let colleges = await getCollegesByOwner(user.uid);
-      
-      // If no colleges found with ownerId, show all colleges with a note
-      // This allows testing even if ownerId hasn't been set up yet
-      if (colleges.length === 0) {
-        const allColleges = await getAllColleges();
-        if (allColleges.length > 0) {
-          setError("No colleges found with your ownerId. Showing all colleges for testing. To restrict access, add an 'ownerId' field to college documents matching your user ID.");
-          colleges = allColleges;
-        }
-      }
-      
-      setMyColleges(colleges);
-      if (colleges.length > 0) {
-        setSelectedCollege(colleges[0].id);
-        handleCollegeSelect(colleges[0].id);
-      }
-    } catch (error) {
-      console.error("Error loading colleges:", error);
-      // Fallback: try to load all colleges if owner-based query fails
-      try {
-        const allColleges = await getAllColleges();
-        setMyColleges(allColleges);
-        setError("Note: Showing all colleges. To restrict access, add an 'ownerId' field to college documents.");
-        if (allColleges.length > 0) {
-          setSelectedCollege(allColleges[0].id);
-          handleCollegeSelect(allColleges[0].id);
-        }
-      } catch (fallbackError) {
-        setError("Failed to load colleges. Check your Firestore connection and security rules.");
-      }
-    } finally {
-      setLoadingColleges(false);
-    }
-  };
+  const [newExam, setNewExam] = useState({
+    examName: "",
+    minScore: "",
+    credits: "",
+    transcriptDollars: "",
+  });
 
-  const handleCollegeSelect = async (collegeId) => {
-    try {
-      setLoadingExams(true);
-      setSelectedCollege(collegeId);
-      const examsData = await getExamsByCollege(collegeId);
-      setExams(examsData);
-    } catch (error) {
-      console.error("Error loading exams:", error);
-    } finally {
-      setLoadingExams(false);
-    }
-  };
+  const [minExamCredits, setMinExamCredits] = useState("");
+  const [minExamScore, setMinExamScore] = useState("");
+  const [examFilter, setExamFilter] = useState("");
+  const [onlyFlagged, setOnlyFlagged] = useState(false);
 
   const handleLogout = async () => {
     setLoggingOut(true);
     try {
       await logoutUser();
-    } catch (error) {
-      console.error("Error logging out:", error);
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoggingOut(false);
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      setLoading(true);
+      try {
+        const collegeId = userData?.collegeId || "MSU";
+        const details = await API.getCollege(collegeId);
+        const list = await API.listExams(collegeId);
+        setCollege(details);
+        setExams(list);
+      } catch (err) {
+        console.error("Failed to load data:", err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [user, userData]);
+
+  const filteredExams = useMemo(() => {
+    const minScore = Number(minExamScore || 0);
+    const minCredits = Number(minExamCredits || 0);
+    const filter = examFilter.trim().toLowerCase();
+    return exams.filter((e) => {
+      if (onlyFlagged && !(Number(e.flagged || 0) > 0)) return false;
+      if (minScore && Number(e.minScore || 0) < minScore) return false;
+      if (minCredits && Number(e.credits || 0) < minCredits) return false;
+      if (filter && !e.examName.toLowerCase().includes(filter)) return false;
+      return true;
+    });
+  }, [exams, minExamCredits, minExamScore, examFilter, onlyFlagged]);
+
+  const refresh = async () => {
+    if (!college) return;
+    const list = await API.listExams(college.id);
+    setExams(list);
+  };
+
+  const submitAddExam = async () => {
+    if (!college) return;
+    const { examName, minScore, credits, transcriptDollars } = newExam;
+    if (!examName.trim()) return alert("Exam name required");
+    try {
+      const cents = Math.round(
+        (parseFloat(transcriptDollars || "0") || 0) * 100
+      );
+      const created = await API.addExam(college.id, {
+        examName,
+        minScore: Number(minScore || 0),
+        credits: Number(credits || 0),
+        transcriptChargeCents: cents,
+      });
+      setExams((prev) => [...prev, created]);
+      setAddExamOpen(false);
+      setNewExam({ examName: "", minScore: "", credits: "", transcriptDollars: "" });
+    } catch {
+      alert("Failed to add exam");
+    }
+  };
+
+  const submitEditExam = async () => {
+    if (!college || !editExam) return;
+    const { examName, minScore, credits, transcriptDollars } = newExam;
+    try {
+      const cents = Math.round(
+        (parseFloat(transcriptDollars || "0") || 0) * 100
+      );
+      const updated = await API.updateExam(college.id, editExam.id, {
+        examName,
+        minScore: Number(minScore || 0),
+        credits: Number(credits || 0),
+        transcriptChargeCents: cents,
+      });
+      setExams((prev) =>
+        prev.map((e) => (e.id === editExam.id ? updated : e))
+      );
+      setEditExam(null);
+    } catch {
+      alert("Failed to update exam");
+    }
+  };
+
+  const deleteExam = async (examId) => {
+    if (!confirm("Delete this exam?")) return;
+    try {
+      await API.deleteExam(college.id, examId);
+      setExams((prev) => prev.filter((e) => e.id !== examId));
+    } catch {
+      alert("Failed to delete exam");
+    }
+  };
+
+  const resetFlags = async (examId) => {
+    if (!confirm("Reset all flags for this exam?")) return;
+    try {
+      await API.resetFlags(college.id, examId);
+      setExams((prev) =>
+        prev.map((e) => (e.id === examId ? { ...e, flagged: 0 } : e))
+      );
+    } catch {
+      alert("Failed to reset flags");
+    }
+  };
+
+  if (authLoading || loading)
+    return (
+      <div className="empty" style={{ color: "white" }}>
+        Loading...
+      </div>
+    );
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "1200px", margin: "0 auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
-        <h1>Institution Dashboard</h1>
-        <button 
-          onClick={handleLogout} 
-          disabled={loggingOut}
+    <div className="shell">
+      <div className="container">
+        <header
+          className="topbar"
           style={{
-            padding: "0.5rem 1rem",
-            background: "#dc3545",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer"
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            backgroundColor: "#111827",
+            padding: "1rem 2rem",
+            borderBottom: "1px solid #1f2937",
           }}
         >
-          {loggingOut ? "Logging out..." : "Logout"}
-        </button>
-      </div>
+          <h1 className="brand">CLEP Acceptance</h1>
+          <button
+            onClick={handleLogout}
+            disabled={loggingOut}
+            style={{
+              padding: "0.6rem 1.2rem",
+              background: "#dc3545",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              fontWeight: "500",
+              cursor: "pointer",
+            }}
+          >
+            {loggingOut ? "Logging out..." : "Logout"}
+          </button>
+        </header>
 
-      <div style={{ background: "#f5f5f5", padding: "1.5rem", borderRadius: "8px", marginBottom: "2rem" }}>
-        <h2>Welcome, {userData?.email || user?.email}!</h2>
-        <p><strong>Role:</strong> {userData?.role || "Unknown"}</p>
-        <p><strong>User ID:</strong> {user?.uid}</p>
-      </div>
-
-      {error && (
-        <div style={{
-          padding: "1rem",
-          background: "#f8d7da",
-          color: "#721c24",
-          borderRadius: "8px",
-          marginBottom: "2rem"
-        }}>
-          {error}
-        </div>
-      )}
-
-      <div style={{ background: "white", padding: "1.5rem", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
-        <h2>My Colleges</h2>
-        <p style={{ color: "#666", marginBottom: "1rem" }}>
-          You can only view and edit colleges where you are the owner (ownerId matches your user ID).
-        </p>
-
-        {loadingColleges ? (
-          <p>Loading your colleges...</p>
-        ) : myColleges.length === 0 ? (
-          <div style={{ 
-            padding: "2rem", 
-            background: "#fff3cd", 
-            borderRadius: "8px",
-            border: "1px solid #ffc107"
-          }}>
-            <p><strong>No colleges found.</strong></p>
-            <p>To manage a college, the college document in Firestore must have an <code>ownerId</code> field that matches your user ID: <strong>{user?.uid}</strong></p>
-            <p style={{ marginTop: "1rem", fontSize: "0.9rem" }}>
-              Example: Create a college document with <code>ownerId: "{user?.uid}"</code>
-            </p>
-          </div>
-        ) : (
-          <div>
-            {myColleges.length > 1 && (
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label htmlFor="college-select" style={{ display: "block", marginBottom: "0.5rem", fontWeight: "500" }}>
-                  Select College:
-                </label>
-                <select
-                  id="college-select"
-                  value={selectedCollege || ""}
-                  onChange={(e) => handleCollegeSelect(e.target.value)}
-                  style={{
-                    width: "100%",
-                    maxWidth: "400px",
-                    padding: "0.5rem",
-                    border: "1px solid #ddd",
-                    borderRadius: "4px",
-                    fontSize: "1rem"
-                  }}
-                >
-                  {myColleges.map(college => (
-                    <option key={college.id} value={college.id}>
-                      {college.name || college.id}
-                    </option>
-                  ))}
-                </select>
+        {college && (
+          <main className="stack">
+            <section className="college-card">
+              <div className="row-head">
+                <span className="school">{college.name}</span>
+                <div className="meta">
+                  {college.state && <span className="badge">{college.state}</span>}
+                  {college.zipCode && <span className="badge">{college.zipCode}</span>}
+                </div>
+                <div className="btn-row">
+                  <button className="btn btn-soft" onClick={refresh}>
+                    Refresh
+                  </button>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => setAddExamOpen(true)}
+                  >
+                    + Add Exam
+                  </button>
+                </div>
               </div>
-            )}
 
-            {selectedCollege && (
-              <div>
-                <h3>{myColleges.find(c => c.id === selectedCollege)?.name || selectedCollege} - Exams</h3>
-                {loadingExams ? (
-                  <p>Loading exams...</p>
-                ) : exams.length === 0 ? (
-                  <p style={{ color: "#666" }}>No exams found for this college.</p>
-                ) : (
-                  <div style={{ display: "grid", gap: "1rem", marginTop: "1rem" }}>
-                    {exams.map(exam => (
-                      <div
-                        key={exam.id}
-                        style={{
-                          padding: "1rem",
-                          background: "#f8f9fa",
-                          border: "1px solid #dee2e6",
-                          borderRadius: "8px"
-                        }}
-                      >
-                        <h4 style={{ marginTop: 0 }}>{exam.examName || exam.id}</h4>
-                        {exam.minScore !== undefined && (
-                          <p><strong>Minimum Score:</strong> {exam.minScore}</p>
-                        )}
-                        {exam.credits !== undefined && (
-                          <p><strong>Credits:</strong> {exam.credits}</p>
-                        )}
-                        {exam.transcriptChargeCents !== undefined && (
-                          <p><strong>Transcript Charge:</strong> ${(exam.transcriptChargeCents / 100).toFixed(2)}</p>
-                        )}
-                        {exam.flagged !== undefined && exam.flagged > 0 && (
-                          <p style={{ color: "#dc3545", fontWeight: "500" }}>
-                            ⚠️ This exam has been flagged {exam.flagged} time(s)
-                          </p>
-                        )}
-                        <p style={{ fontSize: "0.9rem", color: "#666" }}>
-                          You can edit this exam (functionality to be implemented)
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                )}
+              <div className="card-body">
+                <div className="table-wrap">
+                  <table className="tbl">
+                    <thead>
+                      <tr>
+                        <th>Exam</th>
+                        <th>Minimum Score</th>
+                        <th>Credits</th>
+                        <th>Transcript Charge</th>
+                        <th>Flags</th>
+                        <th>Last Modified</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredExams.map((e) => (
+                        <tr key={e.id}>
+                          <td>{e.examName}</td>
+                          <td>{e.minScore}</td>
+                          <td>{e.credits}</td>
+                          <td>{money(e.transcriptChargeCents)}</td>
+                          <td>{e.flagged || 0}</td>
+                          <td>{shortDate(e.lastModified)}</td>
+                          <td>
+                            <div className="btn-row">
+                              <button
+                                className="btn btn-soft"
+                                onClick={() => {
+                                  setEditExam(e);
+                                  setNewExam({
+                                    examName: e.examName,
+                                    minScore: e.minScore,
+                                    credits: e.credits,
+                                    transcriptDollars:
+                                      (e.transcriptChargeCents || 0) / 100,
+                                  });
+                                }}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                className="btn btn-danger"
+                                onClick={() => deleteExam(e.id)}
+                              >
+                                Delete
+                              </button>
+                              <button
+                                className="btn btn-soft"
+                                onClick={() => resetFlags(e.id)}
+                              >
+                                Reset Flags
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            )}
-          </div>
+            </section>
+          </main>
         )}
       </div>
 
-      <div style={{ 
-        padding: "1rem", 
-        background: "#e7f3ff", 
-        borderRadius: "8px",
-        border: "1px solid #b3d9ff",
-        marginTop: "2rem"
-      }}>
-        <h3 style={{ marginTop: 0 }}>🏫 Institution Features</h3>
-        <ul style={{ marginBottom: 0 }}>
-          <li>Manage your college's CLEP exam requirements</li>
-          <li>View and edit exams for colleges you own</li>
-          <li>Add/edit exam minimum scores and credit information</li>
-          <li>Update exam acceptance policies</li>
-        </ul>
-        <p style={{ marginTop: "1rem", fontSize: "0.9rem", color: "#666" }}>
-          <strong>Note:</strong> You can only access colleges where <code>ownerId</code> matches your user ID ({user?.uid}).
-        </p>
-      </div>
+      {(addExamOpen || editExam) && (
+        <div className="modal">
+          <div className="dialog">
+            <h3>{editExam ? "Edit Exam" : "Add Exam"}</h3>
+            <div className="grid2">
+              <label className="label">
+                Exam name
+                <input
+                  className="input input--dark"
+                  value={newExam.examName}
+                  onChange={(e) =>
+                    setNewExam((s) => ({ ...s, examName: e.target.value }))
+                  }
+                />
+              </label>
+              <label className="label">
+                Minimum score
+                <input
+                  className="input input--dark"
+                  inputMode="numeric"
+                  value={newExam.minScore}
+                  onChange={(e) =>
+                    setNewExam((s) => ({ ...s, minScore: e.target.value }))
+                  }
+                />
+              </label>
+              <label className="label">
+                Credits
+                <input
+                  className="input input--dark"
+                  inputMode="numeric"
+                  value={newExam.credits}
+                  onChange={(e) =>
+                    setNewExam((s) => ({ ...s, credits: e.target.value }))
+                  }
+                />
+              </label>
+              <label className="label">
+                Transcript charge ($)
+                <input
+                  className="input input--dark"
+                  inputMode="decimal"
+                  value={newExam.transcriptDollars}
+                  onChange={(e) =>
+                    setNewExam((s) => ({
+                      ...s,
+                      transcriptDollars: e.target.value,
+                    }))
+                  }
+                />
+              </label>
+            </div>
+            <div className="btn-row end">
+              <button
+                className="btn btn-soft"
+                onClick={() => {
+                  setAddExamOpen(false);
+                  setEditExam(null);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={editExam ? submitEditExam : submitAddExam}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
