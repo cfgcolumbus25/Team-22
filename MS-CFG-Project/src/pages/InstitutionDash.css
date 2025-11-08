@@ -25,3 +25,30 @@
     padding-bottom: 8px;
     margin-bottom:12px;
 }
+
+.edit-btn{
+    padding:6px 10px;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.edit-btn.hover {background: #f3f4f6; }
+
+.num-save-btn,
+.num-cancel-btn {
+  padding: 4px 8px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.num-save-btn:hover,
+.num-cancel-btn:hover { background: #f3f4f6; }
+
+.institution-dash input[type="number"] {
+  padding: 4px 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}

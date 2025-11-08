@@ -1,7 +1,9 @@
 import useDeleteSelected from "./useDeleteSelected";
+import useRowEditor from "./useRowEditor";
 
 const InstitutionDash = ()=> {
      useDeleteSelected();
+     useRowEditor();
     
     return(
         <div>
@@ -17,6 +19,7 @@ const InstitutionDash = ()=> {
                         <th>Credits Amount:</th>
                         <th>Last modified date:</th>
                         <th>Delete</th>
+                        <th>Edit</th>
                     </tr>
                   </thead>
 
@@ -27,6 +30,7 @@ const InstitutionDash = ()=> {
                         <td>3.0</td>
                         <td>12/06/2024</td>
                         <td><input type = "checkbox" className = "row-select" aria-label = "Select row"/></td>
+                        <td><button type="button" className="edit-btn">Edit</button></td>
                     </tr>
                     <tr>
                         <td>Biology</td>
@@ -34,6 +38,7 @@ const InstitutionDash = ()=> {
                         <td>3.0</td>
                         <td>12/06/2024</td>
                         <td><input type = "checkbox" className = "row-select" aria-label = "Select row"/></td>
+                        <td><button type="button" className="edit-btn">Edit</button></td>
                     </tr>
                     <tr>
                         <td>Calculus</td>
@@ -41,11 +46,12 @@ const InstitutionDash = ()=> {
                         <td>3.0</td>
                         <td>12/06/2024</td>
                         <td><input type = "checkbox" className = "row-select" aria-label = "Select row"/></td>
+                        <td><button type="button" className="edit-btn">Edit</button></td>
                     </tr>
                     </tbody>
                 </table>
 
-                {/*Univfersity of Maryland*/}
+                {/*University of Maryland*/}
                 <h2>The Ohio State University</h2>
                 <table>
                     <thead>
@@ -55,6 +61,7 @@ const InstitutionDash = ()=> {
                             <th>Credits Amount</th>
                             <th>Last modified date</th>
                             <th>Delete</th>
+                            <th>Edit</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,6 +71,7 @@ const InstitutionDash = ()=> {
                           <td>3.0</td>
                           <td>12/06/2024</td>
                           <td><input type = "checkbox" className = "row-select" aria-label= "Select row"/></td>
+                          <td><button type="button" className="edit-btn">Edit</button></td>
                         </tr> 
                         <tr>
                           <td>Biology</td>
@@ -71,6 +79,7 @@ const InstitutionDash = ()=> {
                           <td>3.0</td>
                           <td>12/06/2024</td>
                           <td><input type = "checkbox" className = "row-select" aria-label= "Select row"/></td>
+                          <td><button type="button" className="edit-btn">Edit</button></td>
                         </tr> 
                         <tr>
                            <td>Calculus</td> 
@@ -78,6 +87,7 @@ const InstitutionDash = ()=> {
                            <td>5.0</td>
                            <td>12/06/2024</td>
                            <td><input type = "checkbox" className = "row-select" aria-label= "Select row"/></td>
+                           <td><button type="button" className="edit-btn">Edit</button></td>
                         </tr>
                     </tbody>
                 </table>
