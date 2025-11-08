@@ -1,4 +1,4 @@
-export const InstitutionDash = ()=> {
+const InstitutionDash = ()=> {
     return(
         <div>
             <div className = "institution-dash">
@@ -36,3 +36,5 @@ export const InstitutionDash = ()=> {
             </div>
     );
 };
+
+export default InstitutionDash
