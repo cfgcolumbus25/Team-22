@@ -1,4 +1,5 @@
-import './LearnerDash.css'
+import './LearnerDash.css';
+
 export const IssueSelect = () => (
   <div className="issue-actions">
     <label>
@@ -14,28 +15,20 @@ export const IssueSelect = () => (
 
 const SchoolCard = ({ title, rows }) => (
   <div className="card">
-    <div className="card-header">
-      <h2>{title}</h2>
-    </div>
-
+    <div className="card-header"><h2>{title}</h2></div>
     <div className="card-body">
       <table className="exam-table">
         <thead>
           <tr>
-            <th>Exam</th>
-            <th>Minimum Score</th>
-            <th>Credits</th>
-            <th>Last Modified Date</th>
-            <th>Report Issue</th>
+            <th>Exam</th><th>Minimum Score</th><th>Credits</th>
+            <th>Last Modified Date</th><th>Report Issue</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((r, i) => (
             <tr key={i}>
-              <td>{r.exam}</td>
-              <td>{r.min}</td>
-              <td>{r.credits}</td>
-              <td>{r.modified}</td>
+              <td>{r.exam}</td><td>{r.min}</td>
+              <td>{r.credits}</td><td>{r.modified}</td>
               <td><IssueSelect /></td>
             </tr>
           ))}
@@ -46,38 +39,20 @@ const SchoolCard = ({ title, rows }) => (
 );
 
 export const LearnerDash = () => {
-  const ohioRows = [
-    { exam: "American Government", min: 63, credits: 3.0, modified: "12/5/2024" },
-    { exam: "Biology",             min: 62, credits: 8.0, modified: "11/11/2024" },
-    { exam: "Calculus",            min: 50, credits: 3.0, modified: "07/21/2023" },
-  ];
-
-  const umdRows = [
-    { exam: "American Government", min: 63, credits: 3.0, modified: "12/5/2024" },
-    { exam: "Biology",             min: 62, credits: 8.0, modified: "11/11/2024" },
-    { exam: "Calculus",            min: 50, credits: 3.0, modified: "07/21/2023" },
-  ];
-    const uDRows = [
-    { exam: "American Government", min: 63, credits: 3.0, modified: "12/5/2024" },
-    { exam: "Biology",             min: 62, credits: 8.0, modified: "11/11/2024" },
-    { exam: "Calculus",            min: 50, credits: 3.0, modified: "07/21/2023" },
-  ];
-
-  const uofC = [
-    { exam: "American Government", min: 63, credits: 3.0, modified: "12/5/2024" },
-    { exam: "Biology",             min: 62, credits: 8.0, modified: "11/11/2024" },
-    { exam: "Calculus",            min: 50, credits: 3.0, modified: "07/21/2023" },
+  const data = [
+    { exam: 'American Government', min: 63, credits: 3, modified: '12/5/2024' },
+    { exam: 'Biology', min: 62, credits: 8, modified: '11/11/2024' },
+    { exam: 'Calculus', min: 50, credits: 3, modified: '07/21/2023' },
   ];
 
   return (
-    <div>
+    <div className="learner-bg">
       <h1>Learner Dashboard</h1>
-
       <div className="dash-grid">
-        <SchoolCard title="The Ohio State" rows={ohioRows} />
-        <SchoolCard title="University of Maryland Park College" rows={umdRows} />
-        <SchoolCard title="University of Delaware" rows={uDRows} />
-        <SchoolCard title="University of Cincinnati" rows={uofC} />
+        <SchoolCard title="The Ohio State" rows={data} />
+        <SchoolCard title="University of Maryland Park College" rows={data} />
+        <SchoolCard title="University of Delaware" rows={data} />
+        <SchoolCard title="University of Cincinnati" rows={data} />
       </div>
     </div>
   );
