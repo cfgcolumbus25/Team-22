@@ -8,7 +8,7 @@ import ListIconImg from '../assets/list-icon.jpg';
 import UserIcon from '../assets/user-icon.png';
 
 
-// --- Placeholder Data ---
+// Placeholder Data 
 const collegeData = [
   { 
     name: 'Stanford University', 
@@ -185,7 +185,7 @@ const collegeData = [
 ];
 
 
-// --- College Card Component ---
+// College Card Component
 const CollegeCard = ({ college, onClick }) => {
   let typeClass;
   // Determine styling class based on type
@@ -221,7 +221,7 @@ const CollegeCard = ({ college, onClick }) => {
 };
 
 
-// --- Main Dashboard Component ---
+// Main Dashboard Component
 const LearnerDash = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCollege, setSelectedCollege] = useState(null);

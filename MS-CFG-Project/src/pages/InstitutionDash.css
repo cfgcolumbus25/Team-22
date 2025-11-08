@@ -1,0 +1,21 @@
+.institution-dash{
+    opacity: 1;
+    filter: none;
+    color: #0000
+}
+
+.institution,
+.institution-dash table, 
+.institution-dash th, 
+.institution-dash td, 
+.institution-dash h1, 
+.institution-dash p,
+.institution-dash button,
+.institution-dash input,
+.institution-dash label{
+    color: #000;
+}
+
+#delete-btn{
+    color: #000
+}
