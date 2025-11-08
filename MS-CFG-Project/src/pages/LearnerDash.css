@@ -1,6 +1,7 @@
 .learner-bg {
-  background-color: #007bff;  
+  background-color: #007bff;
   min-height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -9,8 +10,8 @@
   box-sizing: border-box;
 }
 
-
-h1 {
+/* header */
+.learner-bg h1 {
   color: white;
   font-size: 2.5rem;
   margin-bottom: 40px;
@@ -18,8 +19,8 @@ h1 {
   text-align: center;
 }
 
-
-.dash-grid {
+/* grid + cards */
+.learner-bg .dash-grid {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -28,8 +29,7 @@ h1 {
   max-width: 1000px;
 }
 
-
-.card {
+.learner-bg .card {
   background-color: white;
   border-radius: 20px;
   width: 90%;
@@ -39,12 +39,12 @@ h1 {
   transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
-.card:hover {
+.learner-bg .card:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
 }
 
-.card-header {
+.learner-bg .card-header {
   background-color: #f8f9fa;
   border-bottom: 1px solid #dee2e6;
   border-radius: 20px 20px 0 0;
@@ -52,51 +52,55 @@ h1 {
   text-align: center;
 }
 
-.card-header h2 {
+.learner-bg .card-header h2 {
   margin: 0;
   color: #007bff;
   font-size: 1.4rem;
   font-weight: bold;
 }
 
-
-.card-body {
+/* table */
+.learner-bg .card-body {
   padding: 20px;
 }
 
-.exam-table {
+.learner-bg .exam-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 720px;
 }
 
-.exam-table th {
+.learner-bg .exam-table th {
   background-color: #f1f3f5;
   color: #6c757d;
   font-weight: 600;
   padding: 12px 14px;
   border-bottom: 1px solid #dee2e6;
   text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
-.exam-table td {
+.learner-bg .exam-table td {
   padding: 12px 14px;
   border-bottom: 1px solid #eee;
   color: #333;
 }
 
-.exam-table tr:nth-child(even) {
+.learner-bg .exam-table tr:nth-child(even) {
   background-color: #fafafa;
 }
 
-
-.issue-actions {
+/* actions */
+.learner-bg .issue-actions {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
   flex-wrap: wrap;
 }
 
-.issue-actions select {
+.learner-bg .issue-actions select {
   padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid #ced4da;
@@ -105,7 +109,7 @@ h1 {
   cursor: pointer;
 }
 
-.issue-actions button {
+.learner-bg .issue-actions button {
   background-color: #1a1a1a;
   color: white;
   border: none;
@@ -116,23 +120,23 @@ h1 {
   transition: background-color 0.3s ease;
 }
 
-.issue-actions button:hover {
+.learner-bg .issue-actions button:hover {
   background-color: #333;
 }
 
-
+/* responsive */
 @media (max-width: 768px) {
-  h1 {
-    font-size: 2rem;
-  }
-
-  .card {
-    width: 95%;
-  }
-
-  .exam-table th,
-  .exam-table td {
+  .learner-bg h1 { font-size: 2rem; }
+  .learner-bg .card { width: 95%; }
+  .learner-bg .exam-table th,
+  .learner-bg .exam-table td {
     font-size: 0.9rem;
     padding: 8px;
   }
 }
+
+
+
+
+
+
