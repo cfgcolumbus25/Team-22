@@ -1,10 +1,12 @@
 .institution-dash{
-    opacity: 1;
-    filter: none;
-    color: #0000
+    background-color: #ffe680;
+    padding: 16px;
+    border-radius: 12px;
+    min-height: 200px;
+    outline: 1x dashed rgba(0,0,0,0.2);
 }
 
-.institution,
+.institution-dash,
 .institution-dash table, 
 .institution-dash th, 
 .institution-dash td, 
@@ -16,8 +18,15 @@
     color: #000;
 }
 
+.institution-dash table, 
+.institution-dash th,
+.institution-dash td {
+    background-color:transparent;
+}
+
+
 #delete-btn{
-    color: #000
+    color: #000;
 }
 
 .institution-dash h1{
@@ -34,7 +43,7 @@
     cursor: pointer;
 }
 
-.edit-btn.hover {background: #f3f4f6; }
+.edit-btn:hover {background: #f3f4f6; }
 
 .num-save-btn,
 .num-cancel-btn {
@@ -52,3 +61,5 @@
   border: 1px solid #d1d5db;
   border-radius: 6px;
 }
+
+
